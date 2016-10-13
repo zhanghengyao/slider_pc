@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0"> 
+	<title>Js图片浏览器</title> 
+	<style>
+	body{
+		margin: 0;
+	}
+	</style>
+</head> 
+<body> 
+<script type="text/javascript"> 
+(function(window){
+    var Swipe = window.Swipe || {};
+    window.Swipe = Swipe;
+    Swipe.mobile = (function(){
+        var touch = {
+            distance: 30,  //滑动距离，超过该距离触发swipe事件，单位像素。
+            duration: 1000 //滑动时长，超过该时间不触发swipe，单位毫秒。
+        };
+
+        /**
+        * 绑定事件
+        * @param  el        触发事件的元素
+        * @param  swipe     事件名称，可选值为swipeLeft,swipeRight,swipeUp,swipeDown
+        * @param  callback  事件回调函数
+        * @param  isStopPropagation   是否停止冒泡，true为停止冒泡
+        * @param  isPreventDefault    是否阻止默认事件，true为阻止默认事件
+        * @param  triggerOnMove       swipe事件有两种触发方式，一种是在touchmove过程中，只要满足滑动距离条件即触发。
+        *                             一种是在touchend中，进入滑动距离判断，如果满足滑动距离触发。
+        *                             默认是在touchend中触发。
+        */
+        function bindSwipe(el, swipe, callback, triggerOnMove, isStopPropagation, isPreventDefault){
+            var startPoint, endPoint, timer;
+
+            /**
+            * 计算滑动方向
+            * 首先根据x方向和y方向滑动的长度决定触发x方向还是y方向的事件。
+            * 然后再判断具体的滑动方向。
+            * 如果滑动距离不够长，不判断方向。
+            */
+            function swipeDirection(x1, y1, x2, y2){
+                var diffX = x1 - x2,
+                    diffY = y1 - y2,
+                    absX = Math.abs(diffX),
+                    absY = Math.abs(diffY),
+                    swipe;
+
+                if(absX >= absY){
+                    if(absX >= touch.distance){
+                        swipe = diffX > 0 ? 'swipeLeft' : 'swipeRight';
+                    }
+                }else{
+                    if(absY >= touch.distance){
+                        swipe = diffY > 0 ? 'swipeUp' : 'swipeDown';
+                    }
+                }
+
+                return swipe;
+            }
+
+            // 清除本次滑动数据
+            function clearSwipe(){
+                startPoint = undefined;
+                endPoint = undefined;
+
+                if(timer !== undefined){
+                    clearTimeout(timer);
+                    timer = undefined;
+                }
+            }
+
+            /**
+            * 判断是否符合条件，如果符合条件就执行swipe事件
+            * @param  el     {HTMLElement}  元素
+            * @param  event  {Event}        Touch原始事件
+            * @param  return 如果执行了事件，就返回true。
+            */
+            function execSwipe(el, event){
+                if(startPoint && endPoint && swipeDirection(startPoint.x, startPoint.y, endPoint.x, endPoint.y) === swipe){
+                    callback.call(el, event);
+                    return true;
+                }
+            }
+
+            el.addEventListener('touchstart', function(event){
+                var self = this, touchPoint = event.touches[0];
+
+                if(isStopPropagation){
+                    event.stopPropagation();
+                }
+
+                if(isPreventDefault){
+                    event.preventDefault();
+                }
+
+                startPoint = {
+                    x: Math.floor(touchPoint.clientX),
+                    y: Math.floor(touchPoint.clientY)
+                };
+
+                timer = setTimeout(function(){
+                    //如果超时，清空本次touch数据
+                    clearSwipe();
+                }, touch.duration);
+            });
+
+            el.addEventListener('touchmove', function(event){
+                var self = this, touchPoint = event.touches[0];
+
+                if(isStopPropagation){
+                    event.stopPropagation();
+                }
+
+                if(isPreventDefault){
+                    event.preventDefault();
+                }
+
+                if(startPoint){
+                    endPoint = {
+                        x: Math.floor(touchPoint.clientX),
+                        y: Math.floor(touchPoint.clientY)
+                    };
+
+                    //执行swipe事件判断，是否符合触发事件
+                    if(triggerOnMove){
+                        if(execSwipe(self, event)){
+                            clearSwipe();
+                        }
+                    }
+                }
+            });
+
+            el.addEventListener('touchend', function(event){
+                if(isStopPropagation){
+                    event.stopPropagation();
+                }
+
+                if(isPreventDefault){
+                    event.preventDefault();
+                }
+
+                execSwipe(self, event);
+                //清除本次touch数据
+                clearSwipe();
+            });
+        }
+
+        /**
+        * @param  el        {HTMLElement}  HTML元素
+        * @param  callback  {Function}     事件回调函数
+        * @param  options   {Object}       可选参数
+        *                   isStopPropagation  {Boolean}  是否停止冒泡，true为停止冒泡
+        *                   isPreventDefault   {Boolean}  是否阻止默认事件，true为阻止默认事件
+        *                   triggerOnMove      {Boolean}
+        *                                       swipe事件有两种触发方式，一种是在touchmove过程中，只要满足滑动距离条件即触发。
+        *                                       一种是在touchend中，进入滑动距离判断，如果满足滑动距离触发。
+        *                                       默认值为false，在touchend中触发。
+        */
+        touch.swipeLeft = function(el, callback, options){
+            if(options){
+                bindSwipe(el, 'swipeLeft', callback, options.triggerOnMove, options.isStopPropagation, options.isPreventDefault);
+            }else{
+                bindSwipe(el, 'swipeLeft', callback);
+            }
+
+        };
+
+        touch.swipeRight = function(el, callback, options){
+            if(options){
+                bindSwipe(el, 'swipeRight', callback, options.triggerOnMove, options.isStopPropagation, options.isPreventDefault);
+            }else{
+                bindSwipe(el, 'swipeRight', callback);
+            }
+        };
+
+        touch.swipeUp = function(el, callback, options){
+            if(options){
+                bindSwipe(el, 'swipeUp', callback, options.triggerOnMove, options.isStopPropagation, options.isPreventDefault);
+            }else{
+                bindSwipe(el, 'swipeUp', callback);
+            }
+        };
+
+        touch.swipeDown = function(el, callback, options){
+            if(options){
+                bindSwipe(el, 'swipeDown', callback, options.triggerOnMove, options.isStopPropagation, options.isPreventDefault);
+            }else{
+                bindSwipe(el, 'swipeDown', callback);
+            }
+        };
+
+        return touch;
+    })();
+})(window)
+<!-- 
+Slider = { 
+	isIE : true, 
+	m_imageSource : [], 
+	m_selIdx : 0, 
+	m_direction : 1, 
+	m_mainviewer : null, 
+	m_delayTimer : null, 
+	m_delayTimer1 : null, 
+	m_curObj : null, 
+	m_tarObj : null, 
+	m_inited : false, 
+	init : function(current,urls){ 
+		this.isIE = document.all ? true : false; 		
+		this.writeCanvas(); 
+		Slider.m_imageSource = urls
+		this.s_length = urls.length;
+		current&&(Slider.m_selIdx = urls.indexOf(current))
+		Slider.m_selIdx<0&&(Slider.m_selIdx=0)
+		console.log(Slider.m_selIdx)
+		this.render(current)
+		// this.start(); 
+	}, 
+	render:function(current){
+		if(current){
+			this.container.innerHTML = '<img src="'+current+'" border="0" style="position:absolute;left:0;top:0;right:0;bottom:0;margin:auto;" index="'+Slider.m_selIdx+'"/>'; 
+		}else{
+			this.container.innerHTML = '<img src="'+Slider.m_imageSource[Slider.m_selIdx]+'" border="0" style="position:absolute;left:0;top:0;right:0;bottom:0;margin:auto;" index="'+Slider.m_selIdx+'"/>'; 
+		}
+		
+		this.bind(this.container.firstChild); 
+	},
+	writeCanvas : function(id){ 
+		document.write('<div id="_swipe_container" style="width:100%;height:100%;position:absolute;overflow:hidden;background-color:black"></div>'); 
+		this.container = document.getElementById('_swipe_container'); 
+	}, 
+	bind : function(obj, evt, fun){ 
+		var _this = this,length=this.s_length; 
+		if(Slider.m_selIdx===0){
+			Swipe.mobile.swipeLeft(obj,_this.swipe_left.bind(_this))
+		}else if(Slider.m_selIdx===length-1){
+			Swipe.mobile.swipeRight(obj,_this.swipe_right.bind(_this))
+		}else{
+			Swipe.mobile.swipeLeft(obj,_this.swipe_left.bind(_this))
+			Swipe.mobile.swipeRight(obj,_this.swipe_right.bind(_this))
+		}
+	}, 
+	swipe_left : function(e){ 
+		console.log('fuck swipeLeft')
+		if(!e)e=window.event; 
+		var obj = e.srcElement || e.target; 
+		Slider.m_selIdx += 1; 
+		if(Slider.m_selIdx>=this.s_length){
+			Slider.m_selIdx=this.s_length-1;
+		}
+		console.log(Slider.m_selIdx)
+		this.render()
+	}, 
+	swipe_right : function(e){ 
+		console.log('fuck swipeRight')
+		if(!e)e=window.event; 
+		var obj = e.srcElement || e.target; 
+		Slider.m_selIdx -= 1; 
+		if(Slider.m_selIdx<0){
+			Slider.m_selIdx=0;
+		}
+		console.log(Slider.m_selIdx)
+		this.render()
+	}, 
+	start : function(){ 
+		var obj = this.m_mainviewer; 
+		if (Slider.isIE){ 
+			obj.style.filter = "alpha(opacity=100)"; 
+		}else{ 
+			obj.style.opacity = "1"; 
+		} 
+
+		this.container.appendChild(this.m_mainviewer); 
+		this.m_mainviewer.style.width = parseInt(this.m_mainviewer.style.width)*(1+this.m_percent)+"px"; 
+		this.m_mainviewer.style.height = parseInt(this.m_mainviewer.style.height)*(1+this.m_percent)+"px"; 
+		this.m_curObj = this.container.childNodes[this.m_selIdx]; 
+		this.m_tarObj = this.m_mainviewer; 
+		if(this.m_delayTimer)clearInterval(Slider.m_delayTimer); 
+		this.m_delayTimer = this.fadeIn(200,5); 
+	}, 
+	fadeIn : function(aa, ab){ 
+		var obj = this.container; 
+		with(this.m_curObj.style){
+			var t1 = parseInt(left);
+			var t3 = parseInt(width);
+			var t4 = parseInt(height);
+			var t5 = parseInt(top);
+		} 
+		if (Slider.m_inited){ 
+			var k1 = (t1 - (this.canvasWidth- parseInt(this.m_curObj.style.width))/2)/ab; 
+			var k3 = (t3-parseInt(this.m_tarObj.style.width))/ab; 
+			var k4 = (t4-parseInt(this.m_tarObj.style.height))/ab; 
+			var k5 = (t5 - parseInt(this.m_tarObj.style.top))/ab; 
+		}else{ 
+			var k1 = (t1 - (this.canvasWidth- this.imageWidth*(1+this.m_percent))/2)/ab; 
+			var k3 = (t3- this.imageWidth*(1+this.m_percent))/ab; 
+			var k4 = (t4 - this.imageHeight*(1+this.m_percent))/ab; 
+			var k5 = (this.imageHeight * this.m_percent/2)/ab; 
+		} 
+		var mobj = this.m_mainviewer; 
+		return setInterval(function(){
+			if(ab<1){ 
+				clearInterval(Slider.m_delayTimer); 
+				if(Slider.m_inited){ 
+					if (!Slider.m_fadein){ 
+						Slider.m_curObj = obj.childNodes[Slider.m_selIdx]; 
+						Slider.m_tarObj = mobj; 
+						mobj.src = obj.childNodes[Slider.m_selIdx].src; 
+						Slider.m_fadein = true; 
+						Slider.m_inited = false; 
+						Slider.m_delayTimer = Slider.fadeIn(200,10); 
+					}else{ 
+						Slider.m_fadein = false; 
+						Slider.m_inited = true; 
+					} 
+				} 
+				Slider.m_inited = true; 
+				return; 
+			} 
+			ab--;t1-=k1;t3-=k3;t4-=k4;t5-=k5; 
+			if (Slider.m_fadein){ 
+				for(var i=0;i<obj.childNodes.length-1;i++){ 
+					obj.childNodes[i].style.left = (parseInt(t1) + (Slider.imageWidth + Slider.m_spaceWidth)*(i-Slider.m_selIdx))+"px"; 
+				} 
+			} 
+			with(mobj.style){
+				left = t1 + "px";
+				top = t5 + "px";
+				width = t3 + "px";
+				height = t4 + "px";} 
+		} 
+		,aa/ab) 
+	} 
+} 
+Slider.init("http://files.jb51.net/demoimg/201005/r_s3.jpg", [ 
+"http://files.jb51.net/demoimg/201005/r_s1.jpg", 
+"http://files.jb51.net/demoimg/201005/r_s2.jpg", 
+"http://files.jb51.net/demoimg/201005/r_s3.jpg", 
+"http://files.jb51.net/demoimg/201005/r_s4.jpg",
+"http://f1.bj.anqu.com/down/MWFiNw==/allimg/1211/17-121116162Q3.jpg" 
+]); 
+//--> 
+</script> 
+</body> 
+</html>

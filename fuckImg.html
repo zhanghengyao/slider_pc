@@ -1,0 +1,47 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0"> 
+<title>Js图片浏览器</title> 
+<style>
+	body{
+		margin: 0;
+	}
+</style>
+</head> 
+<body> 
+<script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="./img_box.js"></script>
+<script type="text/javascript"> 
+var _source1 = [ 
+"http://img.tuku.cn/file_big/201505/d620f7e86cb84799aa62b8c9ef50d938.jpg", 
+"http://imgsrc.baidu.com/forum/w%3D580/sign=f8a297d9d2c8a786be2a4a065708c9c7/19b54813b07eca80b8850ec4922397dda04483b2.jpg", 
+"http://img1.91.com/uploads/allimg/131216/645-131216151457-50.jpg", 
+"http://att.bbs.duowan.com/forum/201512/23/062403vcl2f8r8tts3u2c6.png", 
+"http://att.bbs.duowan.com/forum/201512/04/211455qfhpzvhexbqtfnqn.png", 
+"http://i-3.yiwan.com/2016/7/8/W3dtOjEucG5nLHI6MTMsYjoxM10=/c4072962-1fca-4ba4-820a-8466be54094e.jpg",
+"http://img5.duitang.com/uploads/item/201603/09/20160309213807_CEBfu.thumb.700_0.jpeg" ,
+"http://img3.duitang.com/uploads/item/201603/13/20160313083632_rxTLj.jpeg",
+"http://img3.duitang.com/uploads/item/201608/12/20160812100935_HwNxB.thumb.700_0.jpeg",
+"http://npic7.edushi.com/cn/zixun/zh-chs/2015-09/23/8418-150921164415.jpg",
+"http://npic7.edushi.com/cn/zixun/zh-chs/2015-09/23/8418-150921164232415.jpg",
+"http://wyxj.cume.cc/node/weixin/hardware/getImages?_accessId=be50437d0d404ed3a2da98e0437cc22a&_deviceId=gh_eb6a2e078eba_0e1b706e7cbf4f3f&_realName=%40%23%EF%BF%A5%25%E2%80%A6%E2%80%A6%26%40%40%40%23%23%23.png&_imgName=3EB3C5534A4F603592DE86EFDF167356&_isSmall=1&v=1476169203308"
+]
+var _source2 = [{thumbImg:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/small/C8F5BA53BA068487A9797F65F5A5C22D.jpg',img:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/C8F5BA53BA068487A9797F65F5A5C22D.PNG',accessId:'330c6c1e53d64db892930cfa640372cf',deviceId:'gh_eb6a2e078eba_16621190b238e067',realName:'1476172919650.PNG'}
+,{thumbImg:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/small/039D8B5FDFF6E81664216C6C36277E2B.jpg',img:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/039D8B5FDFF6E81664216C6C36277E2B.PNG',accessId:'330c6c1e53d64db892930cfa640372cf',deviceId:'gh_eb6a2e078eba_16621190b238e067',realName:'1476172911899.PNG'}
+,{thumbImg:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/small/C423845C4CF05A02EE72AD736E6AE58A.jpg',img:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/C423845C4CF05A02EE72AD736E6AE58A.PNG',accessId:'330c6c1e53d64db892930cfa640372cf',deviceId:'gh_eb6a2e078eba_16621190b238e067',realName:'1476172908750.PNG'}
+]
+var _current = {thumbImg:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/small/C8F5BA53BA068487A9797F65F5A5C22D.jpg',img:'http://wyxj.cume.cc/node/image/gh_eb6a2e078eba_16621190b238e067/330c6c1e53d64db892930cfa640372cf/C8F5BA53BA068487A9797F65F5A5C22D.PNG',accessId:'330c6c1e53d64db892930cfa640372cf',deviceId:'gh_eb6a2e078eba_16621190b238e067',realName:'1476172919650.PNG'}
+Slider(_current,_source2); 
+
+// setTimeout(function(){
+// 	SliderReload(['http://imgsrc.baidu.com/forum/w=580/sign=9eb9e747ef50352ab16125006342fb1a/79e354380cd7912333977c84ab345982b3b780ab.jpg'])
+// },2000)
+// setTimeout(function(){
+// 	SliderReload(['http://h.hiphotos.baidu.com/image/pic/item/8694a4c27d1ed21be187f903af6eddc450da3f8e.jpg'])
+// },3000)
+//--> 
+</script> 
+</body> 
+</html>
